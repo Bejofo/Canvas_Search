@@ -1,0 +1,69 @@
+<!-- <script src="main.js"></script> -->
+<!-- https://loading.io/css/ -->
+<style>
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: 2px;
+  border: 2px solid gray;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: gray transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>
+<input id="q" type="text"></input>
+<button onclick="search()">Search</button>
+<br>
+<br>
+<div id="l" class="lds-ring" style="display:none"><div></div><div></div><div></div><div></div></div>
+<p id="results"></p>
+
+<script>
+
+var last_time_stamp = null;
+
+function search(){
+    var query = document.getElementById("q").value;
+    last_time_stamp = new Date().getTime();
+    document.getElementById("l").setAttribute("style","display:block")
+    fetch("/s?s=" + query)
+        .then((response) => response.json())
+        .then(displayResponse);
+}
+
+function displayResponse(res){
+    console.log(res);
+    const deltat = new Date().getTime() - last_time_stamp;
+    document.getElementById("l").setAttribute("style","display:none")
+    const r =  document.getElementById("results")
+    r.innerHTML = res.join("<br>");
+    r.innerHTML += `<br> Found ${res.length} matches in ${Math.round(deltat/10)*10/1000} seconds`
+}
+
+</script>
